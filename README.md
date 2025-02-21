@@ -1,13 +1,11 @@
-#!/bin/sh
+SoX: Sound eXchange
+===================
 
-cat > README << .
-			      SoX: Sound eXchange
-			      ===================
+SoX (Sound eXchange) is the Swiss Army knife of sound processing tools:
 
-SoX (Sound eXchange) is the Swiss Army knife of sound processing tools: it
-can convert sound files between many different file formats & audio devices,
-and can apply many sound effects & transformations, as well as doing basic
-analysis and providing input to more capable analysis and plotting tools.
+- Convert sound files between many different file formats & audio devices.
+- Basic analysis and input to more capable analysis and plotting tools.
+- Apply many sound effects & transformations.
 
 SoX is licensed under the GNU GPL and GNU LGPL.  To be precise, the 'sox'
 and 'soxi' programs are distributed under the GPL, while the library
@@ -51,15 +49,3 @@ mailing list which you can join to discuss all matters SoX with other SoX
 users; the mail address for this list is:
 
 		   mailto:sox-users@lists.sourceforge.net
-
-.
-cat FEATURES.in \
-	| sed "s/!!/			/" \
-	| sed "s/^\*\*/    o /" \
-	| sed "s/^\*/  o /" \
-	| sed "s/(:[a-zA-Z0-9_= -]*:)//g" \
-       	>> README
-
-echo version=pmwiki-2.2.0-beta65 ordered=1 urlencoded=1 > Docs.Features
-echo -n text= >> Docs.Features
-cat FEATURES.in|sed "s/%/%25/g"|sed "s/$/%0a/"|tr -d '\n' >> Docs.Features
