@@ -1,0 +1,20 @@
+name: Auto Reconfigure
+on: workflow_dispatch
+jobs:
+  configure:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Installing
+        run: sudo apt-get install autoconf automake libtool
+      - name: Reconfigure
+        run: autoreconf -i
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: SoX Tarball
+          path: .
+          overwrite: true
+          compression-level: 9
+          if-no-files-found: error
