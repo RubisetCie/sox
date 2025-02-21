@@ -167,7 +167,7 @@ static sox_bool very_first_effchain = sox_true;
      also that it has never been restarted. Only then we may use the
      optimize_trim() hack. */
 static char *effects_filename = NULL;
-static char * play_rate_arg = NULL;
+static char *play_rate_arg = NULL;
 static char *norm_level = NULL;
 
 /* Flowing */
@@ -1038,7 +1038,7 @@ static void add_effects(sox_effects_chain_t *chain)
   int guard = is_guarded - 1;
   size_t i;
   sox_effect_t * effp;
-  char * rate_arg = is_player ? (play_rate_arg ? play_rate_arg : "-l") : NULL;
+  char * rate_arg = play_rate_arg ? play_rate_arg : NULL;
 
   /* 1st `effect' in the chain is the input combiner_signal.
    * add it only if its not there from a previous run.  */
@@ -1928,8 +1928,8 @@ static void usage(char const * message)
   };
   static char const * const lines3[] = {
 "--norm                   Guard (see --guard) & normalise",
-"--play-rate-arg ARG      Default `rate' argument for auto-resample with `play'",
 "--plot gnuplot|octave    Generate script to plot response of filter effect",
+"-Q --quality 0-7         Quality of effect processing (default 4)",
 "-q, --no-show-progress   Run in quiet mode; opposite of -S",
 "--replay-gain track|album|off  Default: off (sox, rec), track (play)",
 "-R                       Use default random numbers (same on each run of SoX)",
@@ -2143,7 +2143,7 @@ static void read_comment_file(sox_comments_t * comments, char const * const file
 }
 
 static char const * const getoptstr =
-  "+b:c:de:hmnpqr:t:v:xBC:DGLMNRSTV::X";
+  "+b:c:de:hmnpqr:t:v:xBC:DGLMNRSTVQ::X";
 
 static struct lsx_option_t const long_options[] = {
   {"add-comment"     , lsx_option_arg_required, NULL, 0},
@@ -2167,7 +2167,6 @@ static struct lsx_option_t const long_options[] = {
   {"ignore-length"   , lsx_option_arg_none    , NULL, 0},
   {"norm"            , lsx_option_arg_optional, NULL, 0},
   {"magic"           , lsx_option_arg_none    , NULL, 0},
-  {"play-rate-arg"   , lsx_option_arg_required, NULL, 0},
   {"clobber"         , lsx_option_arg_none    , NULL, 0},
   {"no-clobber"      , lsx_option_arg_none    , NULL, 0},
   {"multi-threaded"  , lsx_option_arg_none    , NULL, 0},
@@ -2182,6 +2181,7 @@ static struct lsx_option_t const long_options[] = {
   {"help"            , lsx_option_arg_none    , NULL, 'h'},
   {"null"            , lsx_option_arg_none    , NULL, 'n'},
   {"no-show-progress", lsx_option_arg_none    , NULL, 'q'},
+  {"quality"         , lsx_option_arg_required, NULL, 'Q'},
   {"pipe"            , lsx_option_arg_none    , NULL, 'p'},
   {"rate"            , lsx_option_arg_required, NULL, 'r'},
   {"reverse-bits"    , lsx_option_arg_none    , NULL, 'X'},
@@ -2353,11 +2353,10 @@ static char parse_gopts_and_fopts(file_t * f)
         else
           lsx_warn("this build of SoX does not include `magic'");
         break;
-      case 21: play_rate_arg = lsx_strdup(optstate.arg); break;
-      case 22: no_clobber = sox_false; break;
-      case 23: no_clobber = sox_true; break;
-      case 24: sox_globals.use_threads = sox_true; break;
-      case 25:
+      case 21: no_clobber = sox_false; break;
+      case 22: no_clobber = sox_true; break;
+      case 23: sox_globals.use_threads = sox_true; break;
+      case 24:
         if (sscanf(optstate.arg, "%i %c", &i, &dummy) != 1 || i < 8 || i > 16) {
           lsx_fail("Min DFT size must be in range 8 to 16");
           exit(1);
@@ -2372,6 +2371,20 @@ static char parse_gopts_and_fopts(file_t * f)
     case 'M': combine_method = sox_merge; break;
     case 'T': combine_method = sox_multiply; break;
 
+    case 'Q': {                 /* Pass the option to the rate arguments. */
+      char * end_ptr;
+      int q = strtol(optstate.arg, &end_ptr, 10);
+      if (end_ptr == optstate.arg || q < 0 || q > 7 || *end_ptr != '\0') {
+        lsx_fail("parameter `%s' must be between %g and %g", "quality", 0.0d, 7.0d);
+        usage(NULL);
+      }
+      play_rate_arg = malloc(sizeof(char) * 5);
+      if (!play_rate_arg)
+        break;
+      snprintf(play_rate_arg, 5, "-Q %d", q);
+      break;
+    }
+
     case 'R':                   /* Useful for regression testing. */
       sox_globals.repeatable = sox_true;
       break;
@@ -2385,7 +2398,7 @@ static char parse_gopts_and_fopts(file_t * f)
       break;
 
     case '?':
-      usage("invalid option");              /* No return */
+      usage(NULL);
       break;
 
     case 't':
