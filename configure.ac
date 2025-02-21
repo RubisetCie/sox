@@ -32,16 +32,14 @@ AC_PROG_LN_S
 PKG_PROG_PKG_CONFIG
 PKG_INSTALLDIR
 
-AX_APPEND_COMPILE_FLAGS([-fstack-protector-strong])
-AX_APPEND_COMPILE_FLAGS([-Wall -Wmissing-prototypes -Wstrict-prototypes])
-AX_APPEND_LINK_FLAGS([-Wl,--as-needed])
+dnl Add generic compiler flags.
+CFLAGS="-fstack-protector-strong -Wall -Wmissing-prototypes -Wstrict-prototypes $CFLAGS"
 
 dnl Check for system dependent features.
 AC_C_BIGENDIAN
 AC_C_INLINE
 
 dnl Checks for header files.
-AC_HEADER_STDC
 AC_CHECK_HEADERS(fcntl.h unistd.h byteswap.h sys/ioctl.h sys/stat.h sys/time.h sys/timeb.h sys/types.h sys/utsname.h termios.h glob.h fenv.h)
 
 dnl Checks for library functions.

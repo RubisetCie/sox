@@ -84,8 +84,8 @@ FIXHTML = sed 's,<head>,&<link rel="stylesheet" href="http://sox.sourceforge.net
 DOCHTML = sox.html soxi.html soxformat.html libsox.html
 html: $(DOCHTML)
 
-install-html: html 	 
-	@$(NORMAL_INSTALL) 	 
+install-html: html
+	@$(NORMAL_INSTALL)
 	test -z "$(htmldir)/soxpng" || $(MKDIR_P) "$(DESTDIR)$(htmldir)/soxpng"
 	@list='$(DOCHTML)'; for p in $$list; do \
 	if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
@@ -100,7 +100,7 @@ install-html: html
 	$(INSTALL_DATA) "$$d$$p" "$(DESTDIR)$(htmldir)/soxpng/$$f"; \
 	done
 
-uninstall-html: 	 
+uninstall-html:
 	@$(NORMAL_UNINSTALL)
 	@list='$(DOCHTML)'; for p in $$list; do \
 	f=$(am__strip_dir) \
