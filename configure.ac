@@ -3,7 +3,7 @@ dnl Process this file with autoconf to produce a configure script.
 AC_PREREQ(2.62)
 LT_PREREQ(2.4)
 
-AC_INIT(SoX, 14.4.3git, sox-devel@lists.sourceforge.net)
+AC_INIT(SoX, 15.0.0, sox-devel@lists.sourceforge.net)
 
 dnl Increase version when binary compatibility with previous version is broken
 SHLIB_VERSION=3:0:0
